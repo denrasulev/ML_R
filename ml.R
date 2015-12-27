@@ -1,8 +1,12 @@
+# SETUP AND PREPARE
+
 # set working directory
 setwd("C:/Users/Peretz/Dropbox/Coursera/ML")
 
 # load required packages
 library(caret)
+library(e1071)
+library(randomForest)
 
 # set seed for reproducible results
 set.seed(2015)
@@ -10,6 +14,8 @@ set.seed(2015)
 # read in our data
 trn <- read.csv("pml-training.csv")
 tst <- read.csv("pml-testing.csv")
+
+# MAKE EXPLORATORY ANALYSIS
 
 # some exploration on our data
 str(trn)
@@ -24,6 +30,8 @@ hist(as.numeric(trn$classe),
 
 # how many complete cases?
 sum(complete.cases(trn))
+
+# DATA CLEANING
 
 # after some research on our data, we can see that in most cases data are dirty with the following things:
 # missing values, i.e. "", NA values and "#DIV/0!" values. Number of such observations is significant. To
@@ -55,3 +63,39 @@ sum(complete.cases(tst))
 tst <- tst[,-del]
 tst <- tst[,-c(1:7)]
 sum(complete.cases(tst))
+
+# TRAINING AND VALIDATION
+
+# We have a classification task here and to solve it, we'll use Random Forest method, which handles such cases very well.
+# For this we need to split our training data into training and validation sets at the ratio of 75-25.
+
+split <- createDataPartition(trn$classe, p = 0.75, list = FALSE)
+training <- trn[split,]
+validate <- trn[-split,]
+
+model <- train( classe ~ .,
+                data = training,
+                method = "rf",
+                trControl = trainControl(method = "cv", number = 5),
+                prox = TRUE,
+                allowParallel = TRUE)
+
+print(model)
+
+prediction <- predict(model, validate[,-53])
+
+confusionMatrix(prediction, validate$classe)
+
+predict(model, tst)
+
+answers <- predict(model, tst)
+
+pml_write_files = function(x){
+    n = length(x)
+    for(i in 1:n){
+        filename = paste0("problem_id_",i,".txt")
+        write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+    }
+}
+
+pml_write_files(answers)
