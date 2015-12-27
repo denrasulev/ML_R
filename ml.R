@@ -17,34 +17,20 @@ hist(as.numeric(df$classe),
      las = 1)
 
 sum(complete.cases(df))
-
-sum(is.na(df[18]))
-nrow(df)
-0.1*nrow(df)
+sum(complete.cases(clean))
 
 sum(df[13] == "")
 sum(is.na(df$avg_roll_belt))
 sum(df$kurtosis_picth_belt == "#DIV/0!")
 
 delete <- numeric()
-threshold <- 0.2 * nrow(df)
+margin <- nrow(df) * 0.2
 
 for(i in 1:length(df)) {
-    if ( sum(df[i] == "") > threshold ) {
+    if ( sum(df[i] == "") || sum(is.na(df[i])) || sum(df[i] == "#DIV/0!") > margin ) {
         delete <- c(delete, i)
     }
-    # if ( sum(is.na(df[i])) > threshold ) {
-    #     delete <- c(delete, i)
-    # }
-    # if ( sum(df[i] == "#DIV/0!") > threshold ) {
-    #     delete <- c(delete, i)
-    # }
 }
-
-for(i in 1:length(df)) {
-    c <- sum(df[i] == "")
-}
-
 
 
 str(delete)
