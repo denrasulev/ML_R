@@ -22,19 +22,32 @@ sum(is.na(df[18]))
 nrow(df)
 0.1*nrow(df)
 
-sum(df$kurtosis_picth_belt == "")
+sum(df[13] == "")
 sum(is.na(df$avg_roll_belt))
 sum(df$kurtosis_picth_belt == "#DIV/0!")
 
 delete <- numeric()
+threshold <- 0.2 * nrow(df)
+
 for(i in 1:length(df)) {
-    if(sum(is.na(df[i])) > 0.2*nrow(df)) {
+    if ( sum(df[i] == "") > threshold ) {
         delete <- c(delete, i)
     }
+    # if ( sum(is.na(df[i])) > threshold ) {
+    #     delete <- c(delete, i)
+    # }
+    # if ( sum(df[i] == "#DIV/0!") > threshold ) {
+    #     delete <- c(delete, i)
+    # }
+}
+
+for(i in 1:length(df)) {
+    c <- sum(df[i] == "")
 }
 
 
 
 str(delete)
 clean <- df[,-delete]
+
 str(clean)
