@@ -1,4 +1,4 @@
-HTML version here: <a href = "http://htmlpreview.github.io/?https://github.com/denrasulev/MachineLearning/blob/master/MLProject.html">see HTML version</a>
+## HTML version of the submission is here: <a href = "http://htmlpreview.github.io/?https://github.com/denrasulev/MachineLearning/blob/master/MLProject.html">see HTML version</a>
 
 ## Coursera ML Project
 
