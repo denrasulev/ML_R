@@ -12,4 +12,12 @@ The training data are available here:
 https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
 
 The test data are available here: 
-https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.cs
+
+## Conacts
+
+You can connect with me / see more info here:
+
+<a href = "http://kz.linkedin.com/in/denisrasulev">LinkedIn</a>
+<a href = "http://www.facebook.com/denis.rasulev">Facebook</a>
+<a href = "http://twitter.com/drasulev">Twitter</a>
