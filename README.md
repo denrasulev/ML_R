@@ -6,6 +6,8 @@ More about dataset and research background can be found here: http://groupware.l
 
 HTML version: http://htmlpreview.github.io/?https://github.com/denrasulev/MachineLearning/blob/master/MLProject.html
 
+<a href="http://htmlpreview.github.io/?https://github.com/Oszkar/practicalmachinelearningclass/blob/master/writeup.html">here</a>
+
 ## Data 
 
 The training data are available here: 
