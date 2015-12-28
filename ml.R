@@ -73,29 +73,31 @@ split <- createDataPartition(trn$classe, p = 0.75, list = FALSE)
 training <- trn[split,]
 validate <- trn[-split,]
 
+# now we build and train our model using training set
+# number of observations allow us to make 5-fold cross-validation, which is more than enough here.
 model <- train( classe ~ .,
                 data = training,
                 method = "rf",
                 trControl = trainControl(method = "cv", number = 5),
                 prox = TRUE,
                 allowParallel = TRUE)
-
 print(model)
 
+# now we use our model to predict 'classe' variable in validation data set.
 prediction <- predict(model, validate[,-53])
 
+# and check how well our prediction works
 confusionMatrix(prediction, validate$classe)
 
-predict(model, tst)
-
+# now we use our model to predict 'classe' variable in our testing data set.
 answers <- predict(model, tst)
 
-pml_write_files = function(x){
+# and write all answers to text files for submission.
+pml_write_files = function(x) {
     n = length(x)
-    for(i in 1:n){
-        filename = paste0("problem_id_",i,".txt")
-        write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+    for(i in 1:n) {
+        filename = paste0("problem_id_", i, ".txt")
+        write.table(x[i], file = filename, quote = FALSE, row.names = FALSE, col.names = FALSE)
     }
 }
-
 pml_write_files(answers)
