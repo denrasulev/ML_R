@@ -4,7 +4,7 @@ The goal of the project is to predict the manner in which exercise was done.
 
 More about dataset and research background can be found here: http://groupware.les.inf.puc-rio.br/har
 
-HTML can be viewed here: http://htmlpreview.github.io/?https://github.com/denrasulev/MachineLearning/blob/master/MLProject.html
+HTML version: http://htmlpreview.github.io/?https://github.com/denrasulev/MachineLearning/blob/master/MLProject.html
 
 ## Data 
 
