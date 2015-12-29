@@ -1,0 +1,140 @@
+---
+title   : "Coursera Machine Learning Project"
+author  : "Denis Rasulev"
+date    : "December 2015"
+output  : html_document
+---
+
+# Introduction
+
+The goal of the project is to build a model that will predict the manner in which excersize is done using the data from accelerometers on the belt, forearm, arm and a dumbell collected from six participants.
+
+# Setup and Prepare
+```{r message = FALSE}
+# Load required packages
+library(caret)
+library(e1071)
+library(randomForest)
+
+# set seed for reproducible results
+set.seed(2015)
+
+# read in our data
+trn <- read.csv("pml-training.csv")
+tst <- read.csv("pml-testing.csv")
+```
+
+# Data Exploration
+
+```{r results = 'hide'}
+str(trn)
+head(trn)
+summary(trn)
+
+# build the histogram to see the distribution of 'classe' variable obseravations
+hist(as.numeric(trn$classe),
+     main = "Activity Type Distribution Histogram",
+     xlab = "Activity Type",
+     col = "green",
+     ylim = c(0, 6000),
+     las = 1)
+```
+
+```{r}
+# how many complete cases do we have?
+sum(complete.cases(trn))
+```
+
+# Data Cleaning
+
+After some research, we can see that several variables mostly contain useless data: missing values, i.e. "", 'NA' values and '#DIV/0!' values and number of such observations is very significant. To make data clean and tidy we will remove such variables that contain more than 50% of useless data. Otherwise we could possibly impute missing values to get more precise model (if needed).
+
+```{r}
+del <- numeric() # vector of variables to be removed
+mar <- nrow(trn) * 0.5 # margin to cut off variables. 0.5 = 50%
+
+# if total number of useless observations is more than 50% then add such variable to the removal list 'del'
+for(i in 1:length(trn)) {
+    if ( sum(trn[i] == "") || sum(is.na(trn[i])) || sum(trn[i] == "#DIV/0!") > mar ) {
+        del <- c(del, i)
+    }
+}
+
+# make clean data set without variables with more than 50% of useless data
+trn <- trn[,-del]
+
+# there are also some descriptive variables (first 7), which we do not need to build our predictive model, so we remove them also
+trn <- trn[,-c(1:7)]
+
+# clean dataset specs
+str(trn, list.len = 0)
+```
+
+Now we have clean and tidy data set with 53 variables only. We need to make same changes to our testing dataset.
+
+```{r}
+# process testing dataset the same way
+tst <- tst[,-del]
+tst <- tst[,-c(1:7)]
+str(tst, list.len = 0)
+```
+
+# Training and Validation
+
+We have a classification task here and to solve it, we'll use Random Forest method, which handles such cases very well. For this we need to split our training data into training and validation sets at the ratio of 75-25.
+
+```{r}
+split <- createDataPartition(trn$classe, p = 0.75, list = FALSE)
+training <- trn[split,]
+validate <- trn[-split,]
+```
+
+Now we build and train our model using training set. We've made 5-fold cross-validation, which is more than enough here, however it takes a while to finish.
+
+```{r cache = TRUE}
+model <- train( classe ~ .,
+                data = training,
+                method = "rf",
+                trControl = trainControl(method = "cv", number = 5),
+                prox = TRUE,
+                allowParallel = TRUE)
+print(model)
+```
+
+Now let's check how good our model is.
+
+```{r}
+# use our model to predict 'classe' variable in validation dataset
+prediction <- predict(model, validate[,-53])
+
+# and check how well our prediction works
+confusionMatrix(prediction, validate$classe)
+```
+
+We have very good accuracy: 99.18%. Sensitivity and specificity are above 99% for all cases. All this means that we have built very good model, which will give us 19.832 correct predictions on our 20 test cases (20 * 0.9916). Now let's test our model on the test set.
+
+```{r}
+# now we use our model to predict 'classe' variable in our testing data set.
+answers <- predict(model, tst)
+answers
+```
+
+We have predicted all values, using our model.
+
+```{r}
+# write all answers to text files for submission.
+pml_write_files = function(x) {
+    n = length(x)
+    for(i in 1:n) {
+        filename = paste0("problem_id_", i, ".txt")
+        write.table(x[i], file = filename, quote = FALSE, row.names = FALSE, col.names = FALSE)
+    }
+}
+pml_write_files(answers)
+```
+
+We've written our predictions to text files and uploaded them to Coursera site. All predictions appeared to be correct.
+
+# Conclusion
+
+Random Forest method proved to be chosen correctly for this case as prediction model built with it showed very good accuracy of about 99%. All test cases were classified correctly and passed Coursera site check.
